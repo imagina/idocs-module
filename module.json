@@ -1,0 +1,17 @@
+{
+    "name": "Idocs",
+    "alias": "idocs",
+    "description": "Module for uploading documents and pdf",
+    "keywords": [],
+    "version": "0.1.0",
+    "active": 1,
+    "order": 1,
+    "providers": [
+        "Modules\\Idocs\\Providers\\IdocsServiceProvider",
+        "Modules\\Idocs\\Providers\\RouteServiceProvider"
+    ],
+    "aliases":{},
+    "files": [
+        "helpers.php"
+    ]
+}
