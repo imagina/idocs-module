@@ -60,4 +60,20 @@ class CacheDocDecorator extends BaseCacheDecorator implements DocRepository
                 }
             );
     }
+
+    /**
+     * search by user
+     * @param $id
+     * @return object
+     */
+    public function whereUser($id)
+    {
+
+        return $this->cache
+            ->remember("{$this->locale}.{$this->entityName}.whereUser.{$id}", $this->cacheTime,
+                function () use ($id) {
+                    return $this->repository->whereUser($id);
+                }
+            );
+    }
 }
