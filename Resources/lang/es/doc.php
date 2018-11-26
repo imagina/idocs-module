@@ -15,6 +15,7 @@ return [
     ],
     'button' => [
         'create doc' => 'Crear Documento',
+        'my docs' => 'Mis Documentos',
     ],
     'table' => [
     ],
