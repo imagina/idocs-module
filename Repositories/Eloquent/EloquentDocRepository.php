@@ -82,4 +82,19 @@ class EloquentDocRepository extends EloquentBaseRepository implements DocReposit
         })->orderBy('created_at', 'DESC')->paginate(12);
 
     }
+
+    /**
+     * search all docs by an user ID
+     *
+     * @param  object $id
+     * @return object
+     */
+
+    public function whereUser($id)
+    {
+        $docs = $this->model->whereHas('users', function($query) use ($id) {
+            $query->where('user_allowed_id', $id);
+            })->paginate(12);
+        return $docs;
+    }
 }
