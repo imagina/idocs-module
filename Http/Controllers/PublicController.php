@@ -10,6 +10,9 @@ use Route;
 use Request;
 use Log;
 
+use Modules\User\Contracts\Authentication;
+use Modules\Iprofile\Repositories\ProfileRepository;
+
 class PublicController extends BasePublicController
 {
     /**
@@ -18,16 +21,20 @@ class PublicController extends BasePublicController
     private $doc;
     private $category;
 
-    public function __construct(DocRepository $doc, CategoryRepository $category)
+    protected $auth;
+    private $profile;
+
+    public function __construct(DocRepository $doc, CategoryRepository $category, ProfileRepository $profile)
     {
         parent::__construct();
         $this->doc = $doc;
         $this->category = $category;
+
+        $this->profile = $profile;
     }
 
     public function index($slug)
     {
-
         //Default Template
         $tpl = 'idocs::frontend.index';
         $ttpl = 'idocs.index';
@@ -43,6 +50,25 @@ class PublicController extends BasePublicController
 
         return view($tpl, compact('docs', 'category'));
 
+    }
+
+    public function see_all()
+    {
+        $user = $this->auth->user();
+
+        if(isset($user) && !empty($user)) {
+            //Default Template
+            $tpl = 'iprofile::frontend.document';
+            $ttpl = 'iprofile.document';
+
+            $docs = $this->doc->whereUser($user->id);
+
+            if (view()->exists($ttpl)) $tpl = $ttpl;
+
+            return view($tpl, compact('docs', 'user'));
+        }else{
+            return redirect()->intended(route(config('asgard.user.config.redirect_route_after_login')));
+        }
     }
 
     public function show($slug)
