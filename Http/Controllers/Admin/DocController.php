@@ -143,6 +143,19 @@ class DocController extends BcrudController
             'viewposition' => 'right',
         ]);
 
+        //modificacion para permisologia de usuarios
+        $this->crud->addField([       // Select2Multiple = n-n relationship (with pivot table)
+            'label' => 'usuarios permitidos',
+            'type' => 'checklist',
+            'name' => 'users', // the method that defines the relationship in your Model
+            'entity' => 'users', // the method that defines the relationship in your Model
+            'attribute' => 'email', // foreign key attribute that is shown to user
+            'model' => "Modules\\User\\Entities\\{$driver}\\User", // foreign key model
+            'pivot' => true, // on create&update, do you need to add/delete pivot table entries?
+            'viewposition' => 'right',
+        ]);
+
+
         $this->crud->addField([
             'name' => 'status',
             'label' => trans('idocs::common.status_text'),
