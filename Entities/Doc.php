@@ -39,6 +39,13 @@ class Doc extends Model
         return $this->belongsTo(Category::class);
     }
 
+    //testeandose
+    public function users()
+    {
+        $driver = config('asgard.user.config.driver');
+        return $this->belongsToMany("Modules\\User\\Entities\\{$driver}\\User", 'idocs__doc__user', 'doc_id', 'user_allowed_id')->withTimestamps();
+    }
+
     public function setUrlAttribute($value){
 
         $attribute_name = "url";
