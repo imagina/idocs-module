@@ -9,12 +9,13 @@ return [
     'plural' => 'Docs',
 
     'title' => [
-        'documentos' => 'Docs',
-        'crear documento' => 'Create Doc',
-        'editar documento' => 'Edit Doc',
+        'docs' => 'Docs',
+        'create doc' => 'Create Doc',
+        'edit doc' => 'Edit Doc',
     ],
     'button' => [
-        'crear doc' => 'Create doc',
+        'create doc' => 'Create doc',
+        'my docs' => 'My Documents',
     ],
     'table' => [
     ],
