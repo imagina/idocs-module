@@ -26,4 +26,11 @@ interface DocRepository extends BaseRepository
      * @return mixed
      */
     public function whereCategory($id);
+
+    /**
+     * search of doc by an ID
+     * @param $id
+     * @return mixed
+     */
+    public function whereUser($id);
 }
