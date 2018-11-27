@@ -14,13 +14,13 @@ use Modules\Idocs\Entities\Category as Category;
                 'uses' => 'PublicController@see_all',
                 //'middleware' => config('asgard.idocs.config.middleware'),
             ]);
-            /*
+            
             $router->get('{category}', [
                 'as' => $locale . 'documents.index',
                 'uses' => 'PublicController@index',
                 //'middleware' => config('asgard.idocs.config.middleware'),
             ]);
-            */
+            
         });
 
 
