@@ -57,6 +57,7 @@
                             <table class="table table-hover doc">
                                 <thead>
                                 <tr>
+                                    <th scope="col">IMAGEN</th>
                                     <th scope="col">DOCUMENTO</th>
                                     <th scope="col">TAMAÑO</th>
                                     <th scope="col">FECHA CREACION</th>
@@ -69,6 +70,15 @@
 
                                         <tbody>
                                             <tr>
+                                                <td>
+                                                    @if(isset($doc->options->mainimage)&&!empty($doc->options->mainimage))
+                                                        <img class="img-fluid" src="{{url($doc->options->mainimage)}}"
+                                                             alt="{{$doc->title}}"/>
+                                                    @else
+                                                        <img class="img-fluid"
+                                                             src="{{url('modules/iblog/img/doc/default.jpg')}}" alt="{{$doc->title}}"/>
+                                                    @endif
+                                                </td>
                                                 <td><a href="{{URL($doc->url)}}" target="_blank">
                                                         <h2>
                                                             <i class="fa fa-file-pdf-o icon" aria-hidden="true"></i><span class="doc">{{$doc->title}}</span>
