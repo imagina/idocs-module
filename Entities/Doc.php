@@ -74,4 +74,7 @@ class Doc extends Model
         return number_format($a,($c ? 2 : 0),",",".")." ".$size[$c];
    }
 
+    public function getOptionsAttribute($value) {
+        return json_decode(json_decode($value));
+    }
 }
