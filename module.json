@@ -3,7 +3,7 @@
     "alias": "idocs",
     "description": "Module for uploading documents and pdf",
     "keywords": [],
-    "version": "0.1.0",
+    "version": "0.2.0",
     "active": 1,
     "order": 1,
     "providers": [
