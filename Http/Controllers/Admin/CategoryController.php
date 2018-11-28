@@ -2,152 +2,101 @@
 
 namespace Modules\Idocs\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Idocs\Entities\Category;
-use Modules\Idocs\Http\Requests\IdocsRequest;
+use Modules\Idocs\Http\Requests\CreateCategoryRequest;
+use Modules\Idocs\Http\Requests\UpdateCategoryRequest;
+use Modules\Idocs\Repositories\CategoryRepository;
+use Modules\Core\Http\Controllers\Admin\AdminBaseController;
 
-use Modules\Bcrud\Http\Controllers\BcrudController;
-use Modules\User\Contracts\Authentication;
-
-
-class CategoryController extends BcrudController
+class CategoryController extends AdminBaseController
 {
     /**
      * @var CategoryRepository
      */
     private $category;
-    private $auth;
-    public function __construct(Authentication $auth)
+
+    public function __construct(CategoryRepository $category)
     {
         parent::__construct();
-        $this->auth = $auth;
 
-        $driver = config('asgard.user.config.driver');
-        /*
-        |--------------------------------------------------------------------------
-        | BASIC CRUD INFORMATION
-        |--------------------------------------------------------------------------
-        */
-        $this->crud->setModel('Modules\Idocs\Entities\Category');
-        $this->crud->setRoute('backend/idocs/category');
-        $this->crud->setEntityNameStrings(trans('idocs::category.single'), trans('idocs::category.plural'));
-        $this->access = [];
-
-        $this->crud->enableAjaxTable();
-        $this->crud->orderBy('created_at', 'DESC');
-        $this->crud->allowAccess('reorder');
-        $this->crud->enableReorder('title', 2);
-
-        /*
-        |--------------------------------------------------------------------------
-        | COLUMNS AND FIELDS
-        |--------------------------------------------------------------------------
-        */
-        // ------ CRUD COLUMNS
-        $this->crud->addColumn([
-            'name' => 'id',
-            'label' => 'ID',
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'title',
-            'label' => trans('idocs::common.title'),
-        ]);
-
-        $this->crud->addColumn([
-            'name' => 'slug',
-            'label' => trans('idocs::common.slug'),
-            'type' => 'text',
-
-        ]);
-
-        $this->crud->addColumn([
-            'label' => trans('idocs::common.parent'),
-            'type' => 'select',
-            'name' => 'parent_id',
-            'entity' => 'parent',
-            'attribute' => 'title',
-            'model' => 'Modules\Idocs\Entities\Category',
-            'defaultvalue' => '0'
-        ]);
-
-
-        $this->crud->addColumn([
-            'name' => 'created_at',
-            'label' => trans('idocs::common.created_at'),
-        ]);
-
-        // ------ CRUD FIELDS
-        $this->crud->addField([
-            'name' => 'title',
-            'label' => trans('idocs::common.title'),
-            'viewposition' => 'left'
-        ]);
-
-        $this->crud->addField([
-            'name' => 'slug',
-            'label' => 'Slug',
-            'type' => 'text',
-            'viewposition' => 'left'
-
-        ]);
-
-        $this->crud->addField([
-            'label' => trans('idocs::common.parent'),
-            'type' => 'select',
-            'name' => 'parent_id',
-            'entity' => 'parent',
-            'attribute' => 'title',
-            'model' => "Modules\\Idocs\\Entities\\Category", // foreign key model
-            'viewposition' => 'right',
-            'emptyvalue'=>0
-        ]);
-
-
-        $this->crud->addField([
-            'name' => 'description',
-            'label' => trans('idocs::common.description'),
-            'type' => 'wysiwyg',
-            'viewposition' => 'left'
-        ]);
-
-
+        $this->category = $category;
     }
 
-
-    public function setup()
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
     {
-        parent::setup();
+        //$categories = $this->category->all();
 
-        $permissions = ['index', 'create', 'edit', 'destroy'];
-        $allowpermissions = [];
-        foreach($permissions as $permission) {
-
-            if($this->auth->hasAccess("idocs.categories.$permission")) {
-                if($permission=='index') $permission = 'list';
-                if($permission=='edit') $permission = 'update';
-                if($permission=='destroy') $permission = 'delete';
-                $allowpermissions[] = $permission;
-            }
-
-            $allowpermissions[] = 'reorder';
-
-        }
-
-        $this->crud->access = $allowpermissions;
+        return view('idocs::admin.categories.index', compact(''));
     }
 
-    public function store(IdocsRequest $request)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
     {
-        return parent::storeCrud();
+        return view('idocs::admin.categories.create');
     }
 
-
-    public function update(IdocsRequest $request)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  CreateCategoryRequest $request
+     * @return Response
+     */
+    public function store(CreateCategoryRequest $request)
     {
-        return parent::updateCrud($request);
+        $this->category->create($request->all());
+
+        return redirect()->route('admin.idocs.category.index')
+            ->withSuccess(trans('core::core.messages.resource created', ['name' => trans('idocs::categories.title.categories')]));
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Category $category
+     * @return Response
+     */
+    public function edit(Category $category)
+    {
+        return view('idocs::admin.categories.edit', compact('category'));
+    }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Category $category
+     * @param  UpdateCategoryRequest $request
+     * @return Response
+     */
+    public function update(Category $category, UpdateCategoryRequest $request)
+    {
+        $this->category->update($category, $request->all());
+
+        return redirect()->route('admin.idocs.category.index')
+            ->withSuccess(trans('core::core.messages.resource updated', ['name' => trans('idocs::categories.title.categories')]));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  Category $category
+     * @return Response
+     */
+    public function destroy(Category $category)
+    {
+        $this->category->destroy($category);
+
+        return redirect()->route('admin.idocs.category.index')
+            ->withSuccess(trans('core::core.messages.resource deleted', ['name' => trans('idocs::categories.title.categories')]));
+    }
 }

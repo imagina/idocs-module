@@ -3,15 +3,10 @@
 namespace Modules\Idocs\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Modules\Idocs\Entities\Category;
-use Modules\Idocs\Entities\Doc;
-use Modules\Idocs\Repositories\Cache\CacheCategoryDecorator;
-use Modules\Idocs\Repositories\Cache\CacheDocDecorator;
-use Modules\Idocs\Repositories\CategoryRepository;
-use Modules\Idocs\Repositories\Eloquent\EloquentCategoryRepository;
-use Modules\Idocs\Repositories\Eloquent\EloquentDocRepository;
-use Modules\Idocs\Repositories\DocRepository;
 use Modules\Core\Traits\CanPublishConfiguration;
+use Modules\Core\Events\BuildingSidebar;
+use Modules\Core\Events\LoadingBackendTranslations;
+use Modules\Idocs\Events\Handlers\RegisterIdocsSidebar;
 
 class IdocsServiceProvider extends ServiceProvider
 {
@@ -31,13 +26,22 @@ class IdocsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerBindings();
+        $this->app['events']->listen(BuildingSidebar::class, RegisterIdocsSidebar::class);
+
+        $this->app['events']->listen(LoadingBackendTranslations::class, function (LoadingBackendTranslations $event) {
+            $event->load('categories', array_dot(trans('idocs::categories')));
+            $event->load('docs', array_dot(trans('idocs::docs')));
+            // append translations
+
+
+        });
     }
 
     public function boot()
     {
-        $this->publishConfig('idocs', 'config');
-        //$this->publishConfig('idocs', 'settings');
         $this->publishConfig('idocs', 'permissions');
+
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
     /**
@@ -52,25 +56,32 @@ class IdocsServiceProvider extends ServiceProvider
 
     private function registerBindings()
     {
-        $this->app->bind(DocRepository::class, function () {
-            $repository = new EloquentDocRepository(new Doc());
+        $this->app->bind(
+            'Modules\Idocs\Repositories\CategoryRepository',
+            function () {
+                $repository = new \Modules\Idocs\Repositories\Eloquent\EloquentCategoryRepository(new \Modules\Idocs\Entities\Category());
 
-            if (config('app.cache') === false) {
-                return $repository;
+                if (! config('app.cache')) {
+                    return $repository;
+                }
+
+                return new \Modules\Idocs\Repositories\Cache\CacheCategoryDecorator($repository);
             }
+        );
+        $this->app->bind(
+            'Modules\Idocs\Repositories\DocRepository',
+            function () {
+                $repository = new \Modules\Idocs\Repositories\Eloquent\EloquentDocRepository(new \Modules\Idocs\Entities\Doc());
 
-            return new CacheDocDecorator($repository);
-        });
+                if (! config('app.cache')) {
+                    return $repository;
+                }
 
-        $this->app->bind(CategoryRepository::class, function () {
-            $repository = new EloquentCategoryRepository(new Category());
-
-            if (config('app.cache') === false) {
-                return $repository;
+                return new \Modules\Idocs\Repositories\Cache\CacheDocDecorator($repository);
             }
+        );
+// add bindings
 
-            return new CacheCategoryDecorator($repository);
-        });
 
     }
 }
