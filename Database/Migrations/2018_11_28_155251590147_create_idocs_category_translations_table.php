@@ -15,8 +15,9 @@ class CreateIdocsCategoryTranslationsTable extends Migration
         Schema::create('idocs__category_translations', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            // Your translatable fields
-
+            $table->text('title');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
             $table->integer('category_id')->unsigned();
             $table->string('locale')->index();
             $table->unique(['category_id', 'locale']);

@@ -15,8 +15,10 @@ class CreateIdocsDocTranslationsTable extends Migration
         Schema::create('idocs__doc_translations', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            // Your translatable fields
-
+            $table->text('title');
+            $table->text('slug');
+            $table->string('url');
+            $table->text('description');
             $table->integer('doc_id')->unsigned();
             $table->string('locale')->index();
             $table->unique(['doc_id', 'locale']);

@@ -5,23 +5,31 @@ namespace Modules\Idocs\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Idocs\Entities\Doc;
+use Modules\Idocs\Repositories\CategoryRepository;
+use Modules\Idocs\Entities\Status;
 use Modules\Idocs\Http\Requests\CreateDocRequest;
 use Modules\Idocs\Http\Requests\UpdateDocRequest;
 use Modules\Idocs\Repositories\DocRepository;
 use Modules\Core\Http\Controllers\Admin\AdminBaseController;
-
+use Modules\User\Repositories\UserRepository;
 class DocController extends AdminBaseController
 {
     /**
      * @var DocRepository
      */
     private $doc;
+    private $user;
+    private $status;
+    private $category;
 
-    public function __construct(DocRepository $doc)
+    public function __construct(DocRepository $doc,UserRepository $user,Status $status,CategoryRepository $category)
     {
         parent::__construct();
 
         $this->doc = $doc;
+        $this->status = $status;
+        $this->user = $user;
+        $this->category=$category;
     }
 
     /**
@@ -31,9 +39,9 @@ class DocController extends AdminBaseController
      */
     public function index()
     {
-        //$docs = $this->doc->all();
+        $docs = $this->doc->paginate(12);
 
-        return view('idocs::admin.docs.index', compact(''));
+        return view('idocs::admin.docs.index', compact('docs'));
     }
 
     /**
@@ -43,7 +51,11 @@ class DocController extends AdminBaseController
      */
     public function create()
     {
-        return view('idocs::admin.docs.create');
+        $users = $this->user->all();
+        $categories=$this->category->all();
+        $statuses = $this->status->lists();
+
+        return view('idocs::admin.docs.create', compact('users','categories','statuses'));
     }
 
     /**
@@ -68,7 +80,10 @@ class DocController extends AdminBaseController
      */
     public function edit(Doc $doc)
     {
-        return view('idocs::admin.docs.edit', compact('doc'));
+        $users = $this->user->all();
+        $categories=$this->category->all();
+        $statuses = $this->status->lists();
+        return view('idocs::admin.docs.edit', compact('doc','users','categories','statuses'));
     }
 
     /**

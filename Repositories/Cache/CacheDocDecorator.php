@@ -13,4 +13,26 @@ class CacheDocDecorator extends BaseCacheDecorator implements DocRepository
         $this->entityName = 'idocs.docs';
         $this->repository = $doc;
     }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getByCategory($id)
+    {
+        return $this->remember(function ()use ($id) {
+            return $this->repository->getByCategory($id);
+        });
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getByUser($id)
+    {
+        return $this->remember(function ()use ($id) {
+            return $this->repository->getByUser($id);
+        });
+    }
 }

@@ -15,7 +15,13 @@ class CreateIdocsDocsTable extends Migration
         Schema::create('idocs__docs', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            // Your fields
+
+            $table->integer('category_id')->unsigned()->nullable();
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('role')->unsigned()->nullable();
+            $table->integer('status')->default(0)->unsigned();
+            $table->foreign('category_id')->references('id')->on('iblog__categories')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on(config('auth.table', 'users'))->onDelete('restrict');
             $table->timestamps();
         });
     }

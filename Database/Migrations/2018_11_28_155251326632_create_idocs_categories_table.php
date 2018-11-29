@@ -15,6 +15,12 @@ class CreateIdocsCategoriesTable extends Migration
         Schema::create('idocs__categories', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->text('options')->nullable();
+            $table->integer('parent_id')->unsigned()->default(0);
+            $table->integer('lft')->unsigned()->nullable();
+            $table->integer('rgt')->unsigned()->nullable();
+            $table->integer('depth')->unsigned()->nullable();
+
             // Your fields
             $table->timestamps();
         });
